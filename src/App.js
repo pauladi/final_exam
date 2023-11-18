@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React, { useState } from 'react';
+import ProductManagement from './ProductManagement';
+import CategoryManagement from './CategoryManagement';
+import TransactionManagement from './TransactionManagement';
+import StockManagement from './StockManagement';
+import TransactionReport from './TransactionReport';
 
 function App() {
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+
+  const addCategory = (newCategory) => {
+    setCategories([...categories, newCategory]);
+  };
+
+  const addProduct = (product) => {
+    setProducts([...products, { ...product, id: Date.now() }]);
+  };
+
+  const addTransaction = (transaction) => {
+    setTransactions([...transactions, { ...transaction, id: Date.now() }]);
+  };
+
+  const updateStock = (productId, newStock) => {
+    setProducts(products.map(product => 
+      product.id === Number(productId) ? { ...product, stock: newStock } : product
+    ));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <CategoryManagement onAddCategory={addCategory} />
+      <ProductManagement onAddProduct={addProduct} categories={categories} />
+      <TransactionManagement products={products} onAddTransaction={addTransaction} />
+      <StockManagement products={products} onUpdateStock={updateStock} />
+      <TransactionReport transactions={transactions} products={products} />
     </div>
   );
 }
